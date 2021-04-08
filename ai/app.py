@@ -22,7 +22,7 @@ class Plagiarism(Resource):
         subject = request.json['subject']
         topic = request.json['topic']
         
-        # handw_txt.convert_txt(subject, topic)
+        handw_txt.convert_txt(subject, topic)
         res = handw_txt.run_plag_detection()
 
         return jsonify(res)
