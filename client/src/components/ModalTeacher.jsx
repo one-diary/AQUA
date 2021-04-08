@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button"
 import AssignmentCard from "./AssignmentCard";
 import ModalBodyStudent from "./ModalBodyStudent";
 
-const ModalTeacher = ({openModal,toggleModal,students,info}) => {
+const ModalTeacher = ({openModal,toggleModal,students,info,assignmentsSubmitted}) => {
     const [show, setShow] = useState(false);
     const handleClose = () => {
         toggleModal();
@@ -16,27 +16,9 @@ const ModalTeacher = ({openModal,toggleModal,students,info}) => {
             setShow(true);
         }
     },[openModal])
-
-
-    const assignments = [
-		{
-			title: "artofwar.docx",
-			author: "Sun Tzu",
-			link: "https://google.com"
-		},
-		{
-			title: "endmysuffering.pdf",
-			author: "Please just end it already",
-			link: "https://google.com"
-		},
-        {
-			title: "endmysuffering.pdf",
-			author: "Please just end it already",
-			link: "https://google.com"
-		},
-	]
-
+    
     return (
+
         <Modal show={show} onHide={handleClose} scrollable>
             {
                 !students ?  (
@@ -45,7 +27,7 @@ const ModalTeacher = ({openModal,toggleModal,students,info}) => {
                                 <Modal.Title md="auto">Assignments by students</Modal.Title>
                             </Modal.Header>
                             <Modal.Body>
-                                <AssignmentCard assignments={assignments} submissions={true} students={true} modal={true}/>
+                                <AssignmentCard assignments={assignmentsSubmitted} submissions={true} students={true} modal={true}/>
                             </Modal.Body>
                         </>
                 ) : (

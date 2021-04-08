@@ -107,6 +107,7 @@ const DescriptionText = styled.a`
 const AssignmentCard = ({assignments,students,modal,submissions}) => {
 	const [showModal, setShowModal] = useState(false);
 	const [showItem, setShowItem] = useState(false);
+	const [assignmentsSubmitted,setAssignmentsSubmitted] = useState([]);
 
     const toggleModal = () => {
         setShowModal(false);
@@ -114,6 +115,8 @@ const AssignmentCard = ({assignments,students,modal,submissions}) => {
 
     const onClickHandler = (item) => {
         //Ensuring that card in modal isnt clickable
+				
+		setAssignmentsSubmitted(item.assignmentsSubmitted);
         if(!modal){
             setShowModal(true);
 			setShowItem(item);
@@ -126,6 +129,35 @@ const AssignmentCard = ({assignments,students,modal,submissions}) => {
 				let date  = new Date(item.deadline);
 				// submissions ? date = new Date(item.dateSubmitted) : date = new Date(item.deadline);
 				return (
+					submissions ? (
+						<Card modal={modal} key={index} onClick ={()=>onClickHandler(item)}>
+					<Content>
+						<Description theme={(index % 2 === 0) && `primary`}>
+							<DescriptionIcon />
+							<DescriptionText theme={(index % 2 === 0) && `primary`}>
+								{`${item.assignment}`}
+							</DescriptionText>
+						</Description>
+						
+							<Description theme={(index % 2 !== 0) && `primary`} noBorderRadius>
+								<DescriptionIcon/>
+								<DescriptionText theme={(index % 2 !== 0) && `primary`} notUnderlined>
+									Submitted on: {item.dateSubmitted.substring(0, 10)}
+								</DescriptionText>
+							</Description>
+
+						
+                            <AssignedBy>
+                                <AssignmentIndIcon />
+                                <AssignedByText>
+                                    {item.givenBy.name}
+                                </AssignedByText>
+                            </AssignedBy>
+
+					</Content>
+				</Card>				
+					) : (
+
 				<Card modal={modal} key={index} onClick ={()=>onClickHandler(item)}>
 					<Content>
 						<Description theme={(index % 2 === 0) && `primary`}>
@@ -135,18 +167,7 @@ const AssignmentCard = ({assignments,students,modal,submissions}) => {
 							</DescriptionText>
 						</Description>
 						
-						{/* {submissions ? (
-								<Description theme={(index % 2 !== 0) && `primary`} noBorderRadius>
-									<DescriptionIcon/>
-									<DescriptionText theme={(index % 2 !== 0) && `primary`} notUnderlined>
-										: {item.dateSubmitted.substring(0, 10)}
-									</DescriptionText>
-							</Description>
-						): (
-							""
-						)
-						} */}
-
+						
 						{(date>Date.now())?(
 							<Description theme={(index % 2 !== 0) && `primary`} noBorderRadius>
 								<DescriptionIcon/>
@@ -171,9 +192,10 @@ const AssignmentCard = ({assignments,students,modal,submissions}) => {
 
 					</Content>
 				</Card>
+					)
 			)})}
 
-            {showModal ? <ModalTeacher students={students} toggleModal={toggleModal} openModal={showModal} info={showItem} /> : null}
+            {showModal ? <ModalTeacher assignmentsSubmitted={assignmentsSubmitted} students={students} toggleModal={toggleModal} openModal={showModal} info={showItem} /> : null}
 		</>
 	)
 }

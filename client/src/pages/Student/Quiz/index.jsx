@@ -119,7 +119,7 @@ const Quiz = () => {
 	const [qna,setQna] = useState([]);
 	const [loading,setIsLoading] = useState(false);
 
-	const apiUrl = process.env.REACT_APP_FLASK_API_URL;
+	const apiUrl = process.env.REACT_APP_API_URL;
 
 	const submit = (e) => {
 		e.preventDefault();
@@ -130,7 +130,7 @@ const Quiz = () => {
 			setQuestionsIsVisible(!questionsIsVisible);
 			setQna(res.data);
 			setIsLoading(false);
-			// console.log(res.data,"data");
+			console.log(res.data,"data");
 		}).catch((err) => {
 			setIsLoading(false);
 			console.log(err);

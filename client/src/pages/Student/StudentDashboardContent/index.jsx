@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import AssignmentCard from "../../../components/AssignmentCard";
 import Notices from "../../../components/Notices";
@@ -59,7 +59,7 @@ const Flexbreak = styled.div`
 
 const AssignmentsNotices = () => {
 	// eslint-disable-next-line
-	const [teacher, setTeacher] = useState({});
+	const [student, setStudent] = useState({});
 	const [assignments, setAssignments] = useState([]);
 	const [notices, setNotices] = useState([]);
 
@@ -76,17 +76,18 @@ const AssignmentsNotices = () => {
 			}
 		});
 	}
-	
+
 	const nodeApiUrl = process.env.REACT_APP_NODE_API_URL;
 	const { token } = useContext(UserContext);
+
 	useEffect(() => {
-		Axios.get(`${nodeApiUrl}teacher/getTeacher`, {
+		Axios.get(`${nodeApiUrl}student/getStudent`, {
 			headers: {
 				Authorization: "Bearer " + token,
 			},
 		}).then((res) => {
-			setTeacher(res.data.response);
-			console.log(res.data);
+			console.log(res.data.response.assignments);
+			setStudent(res.data.response);
 			setAssignments(res.data.response.assignments);
 			setNotices(res.data.response.notices);
 		});
@@ -95,25 +96,35 @@ const AssignmentsNotices = () => {
 	return (
 		<>
 			<AssignmentsContainer>
-				<Heading>Ongoing Assignments</Heading>
+				{ongoingAssignments.length > 0 && (
+					<Heading>Ongoing Assignments</Heading>
+				)}
 				<Flexbreak />
-				<AssignmentCard click={true} assignments={ongoingAssignments} />
+				<AssignmentCard
+					assignments={ongoingAssignments}
+					students={true}
+				/>
 			</AssignmentsContainer>
 			<AssignmentsContainer>
-				<Heading>Completed Assignments</Heading>
+				{completedAssignments.length > 0 && (
+					<Heading>Completed Assignments</Heading>
+				)}
 				<Flexbreak />
-				<AssignmentCard assignments={completedAssignments} />
+				<AssignmentCard
+					assignments={completedAssignments}
+					students={true}
+				/>
 			</AssignmentsContainer>
 			<NoticesContainer>
 				<Heading>Notices</Heading>
 				<Flexbreak />
-				<Notices notices={notices} />
+				<Notices notices={notices} students={true} />
 			</NoticesContainer>
 		</>
 	);
 };
 
-const TeacherDashboardContent = () => {
+const StudentDashboardContent = () => {
 	return (
 		<Container>
 			<AssignmentsNotices />
@@ -121,4 +132,4 @@ const TeacherDashboardContent = () => {
 	);
 };
 
-export default TeacherDashboardContent;
+export default StudentDashboardContent;
