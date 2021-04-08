@@ -47,8 +47,3 @@ def save_file(filename: str, content: str):
         afile.write(content)
 
      
-    
-# loc_id = get_operation_id("https://aquabucket.blob.core.windows.net/coa/assignments/Probability/answer/bme.pdf")
-# time.sleep(10)
-# cont = run_ocr(loc_id)
-# save_file("arijit", cont)

@@ -61,7 +61,7 @@ def main():
     
     for ctr, file in enumerate(text_files):
         temp_dict = {
-            "original": file,
+            "original": file.replace(".txt", ""),
             "results": most_similar(ctr, text_files)
         }
         result_dict.append(temp_dict)
