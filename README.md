@@ -39,7 +39,10 @@
 
 * [About the Project](#about-the-project)
   * [Question Generator](#Question-Generator)
-  * [Plagiarism Checker](#plagiarism-checker)
+  * [Plagiarism Detector](#plagiarism-detector)
+  * [Keyword Checker](#keyword-checker)
+  * [Handwriting to Text](#handwriting-to-text-conversion)
+  * [Anti Burden System](#anti-burden-system)
   * [Built With](#built-with)
 * [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
@@ -57,7 +60,9 @@
 
 [![Product Name Screen Shot][product-screenshot]](http://aqua-app.now.sh/)
 
-Project AQUA is a  platform that will **organize** the system of assignments and **quizzes** conducted by schools/colleges for the continuous evaluation of students.
+
+
+Project **AQUA** is a **Digital Evaluation Platform** which leverages the power of leading-edge frameworks paired with state of the art artificial intelligence algorithms to provide an seamless and organized experience both for educators and students alike. 
 
 <br/>
 
@@ -74,22 +79,45 @@ Project AQUA is a  platform that will **organize** the system of assignments and
 :upside_down_face: Anti Burden System
 
 
-For detailed descriiption of the services, plese visit the [usage](#usage) section
 
 <br />
 
 
 ## Question Generator
 
-We used *SQuADv1* dataset and and *T5 model* with *highlight* preprocessing format. This idea is proposed in the ["A Recurrent BERT-based Model for Question Generation"](https://www.aclweb.org/anthology/D19-5821.pdf)
+
+Generate quizlets by just entering a keyword, which can be anything ranging from a the name of a famous personality to a concept in astrophysics.
+
+We used *SQuADv1* dataset and and *T5 model* with *highlight* preprocessing format to generate question answer pairs from content scrapped from Wikipedia. This idea is proposed in the ["A Recurrent BERT-based Model for Question Generation"](https://www.aclweb.org/anthology/D19-5821.pdf)
 
 
 <br />
 
-## Plagiarism Checker
+## Plagiarism Detector
+Often, one educator is responsible for evaluating assignments of around 120 students (2 batches of 60 students). In such cases, detecting plagiarism by a human is a up hill task which also requires a lot of time. In order to solve this problem, we thought of computerizing the entire process of plagiarism checking, and yes **it works on handwritten assignments too!**
 
-We used TF-IDF to vectorize the documents and then calculated the cosine similarity between them to check for potential plagiarism
+We used TF-IDF to vectorize the documents and then calculated the cosine similarity between them to check for potential plagiarism.
 
+<br />
+
+## Keyword Checker
+As mentioned earlier, checking assignments, specially handwritten ones can become a tedious task. In order to further simplify the lives of teachers, we have come up with an automatic keyword checker which verifies the presence of certain keywords in the assignment. This will if not completely erradicate manual verification, simplify the process of evaluation to a great extent.
+
+We used TF-IDF to vectorize the documents and then calculated the cosine similarity between them to check for potential plagiarism.
+
+<br />
+
+## Handwriting to Text Conversion
+
+Thanks to Azure's Cognitive Services OCR, we were able to implement a blazing fast and accurate OCR into our application without having to find a reliable dataset and train a CNN model from scratch. 
+
+<br />
+
+## Anti Burden System
+
+Often, we students are bombarded with clashing deadlines which not only causes increased level of stress but also leads to malpractices like plagiarism. To overcome this problem, we have designed a simple solution in which there needs to be a gap of atleast 24 hours between two deadlines, thus giving students enough time to comlplete their work.
+
+<br />
 <br />
 
 ## Built With
@@ -112,6 +140,8 @@ We used TF-IDF to vectorize the documents and then calculated the cosine similar
 <img alt="SkL" src="https://img.shields.io/badge/node.js-339933?style=for-the-badge&logo=node.js&logoColor=white"/>
 
 <img alt="SkL" src="https://img.shields.io/badge/flask-000000?style=for-the-badge&logo=flask&logoColor=white"/>
+
+<img alt="SkL" src="https://img.shields.io/badge/nginx-009639?style=for-the-badge&logo=nginx&logoColor=white"/>
 
 </p>
 
