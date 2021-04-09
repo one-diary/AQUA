@@ -4,7 +4,8 @@ from flask_cors import CORS, cross_origin
 import logging
 import os
 
-from scripts.assignments import handw_txt
+from scripts.assignments.keyword import check_keywords
+from scripts.assignments import handw_txt, azure_blob_utils
 from scripts.quiz_generator import neural_question_generator
 from scripts.quiz_generator import wiki_scraper
 
@@ -16,6 +17,16 @@ CORS(app, resources={r"*": {"origins": "*"}}, allow_headers="*", origin="*")
 
 api = Api(app)
 
+
+class Keywords(Resource):
+    def post(self):
+        subject = request.json['subject']
+        topic = request.json['topic']
+        kwords = request.json['kwords']
+        
+        return jsonify(check_keywords(kwords))
+
+api.add_resource(Keywords, "/keywords")
 
 class Plagiarism(Resource):
     def post(self):
@@ -43,9 +54,7 @@ api.add_resource(QuizGenerator, '/quiz')
 
 class UploadQuestion(Resource):
     def post(self):
-        app.logger.info("Upload Question hit") # log
-        app.logger.info(request.get_json()) # log
-        print(request.form) # log
+        app.logger.info("Uploading Questions") # log
         subject = request.form.get('subject')
         doc = request.files['doc']
         fname = doc.filename
@@ -55,7 +64,8 @@ class UploadQuestion(Resource):
         ASSIGNMENT_NAME = fname.split('.')[0]
         REMOTE_FILE_DIR = 'assignments/{dir_name}/question/'.format(dir_name=ASSIGNMENT_NAME) + fname
         doc.save(LOCAL_PATH)
-        doc_url = upload_file(subject, LOCAL_PATH, REMOTE_FILE_DIR)
+        
+        doc_url = azure_blob_utils.upload_file(subject, LOCAL_PATH, REMOTE_FILE_DIR)
         
         files = os.listdir(os.path.join(os.getcwd(), "DUMP"))
         for file in files:
@@ -78,13 +88,12 @@ class UploadAnswer(Resource):
         REMOTE_FILE_DIR = 'assignments/{atag}/answer/'.format(atag=tag) + fname
         
         doc.save(LOCAL_FILE_DIR)
-        doc_url = upload_file(subject, LOCAL_FILE_DIR, REMOTE_FILE_DIR)
+        doc_url = azure_blob_utils.upload_file(subject, LOCAL_FILE_DIR, REMOTE_FILE_DIR)
         
         files = os.listdir(os.path.join(os.getcwd(), "DUMP"))
         for file in files:
             if file != '.gitignore':
                 os.remove(os.path.join("DUMP", file))
-        
 
         return jsonify({"url": doc_url})
 
