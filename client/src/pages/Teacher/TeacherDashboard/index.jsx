@@ -2,7 +2,9 @@ import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import TeacherDashboardContent from "../TeacherDashboardContent";
 import Plagiarism from "../Plagiarism";
+import Notices from "../Notices";
 import Quiz from "../Quiz";
+import Keywords from "../Keywords";
 import Upload from "../Upload";
 // import SearchIcon from '@material-ui/icons/Search';
 import NotificationsIcon from "@material-ui/icons/Notifications";
@@ -10,6 +12,7 @@ import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Badge from "@material-ui/core/Badge";
 import Dropdown from "react-bootstrap/Dropdown";
+import SortByAlphaIcon from "@material-ui/icons/SortByAlpha";
 import KeyboardIcon from "@material-ui/icons/Keyboard";
 import QuestionAnswerIcon from "@material-ui/icons/QuestionAnswer";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
@@ -175,6 +178,13 @@ const StyledCalenderIcon = styled(CalendarTodayIcon)`
 	}
 `;
 
+const StyledNotificationIcon = styled(NotificationsIcon)`
+margin: 0 1rem;
+	@media (max-width: 1224px) {
+		margin: 0 0.5rem;
+	}
+`;
+
 const StyledBadge = styled(Badge)`
 	margin: 0 0.5rem;
 `;
@@ -272,6 +282,13 @@ const SidePanelMember = styled(NavLink)`
 `;
 
 const StyledKeyboardIcon = styled(KeyboardIcon)`
+	margin: 0 1rem;
+	@media (max-width: 1224px) {
+		margin: 0 0.5rem;
+	}
+`;
+
+const StyledSortByAlphaIcon = styled(SortByAlphaIcon)`
 	margin: 0 1rem;
 	@media (max-width: 1224px) {
 		margin: 0 0.5rem;
@@ -383,6 +400,20 @@ const TeacherDashboard = () => {
 						<SidePanelMember
 							exact
 							activeClassName="active"
+							to="/teacher/notice">
+							<StyledNotificationIcon />
+							notices
+						</SidePanelMember>
+						<SidePanelMember
+							exact
+							activeClassName="active"
+							to="/teacher/keywords">
+							<StyledSortByAlphaIcon />
+							keywords
+						</SidePanelMember>
+						<SidePanelMember
+							exact
+							activeClassName="active"
 							to="/teacher/quiz">
 							<StyledQuestionAnswerIcon />
 							quiz
@@ -400,11 +431,17 @@ const TeacherDashboard = () => {
 							<Route path="/teacher/quiz">
 								<Quiz />
 							</Route>
+							<Route path="/teacher/keywords">
+								<Keywords />
+							</Route>
 							<Route path="/teacher/plagiarism/:link?">
 								<Plagiarism />
 							</Route>
 							<Route path="/teacher/upload">
 								<Upload />
+							</Route>
+							<Route path="/teacher/notice">
+								<Notices />
 							</Route>
 							<Route path="/teacher/">
 								<TeacherDashboardContent />

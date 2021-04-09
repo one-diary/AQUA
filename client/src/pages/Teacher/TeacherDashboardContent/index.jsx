@@ -49,7 +49,8 @@ const Heading = styled.h1`
 	font-size: 1.5rem !important;
 	font-weight: 900;
 	margin: 2rem 0 0 2rem;
-	color: #41454a;
+	color: ${(props) => props.message ? "green" : "#41454a"};
+	text-align: ${(props) => props.message ? "center" : ""};
 `;
 
 const Flexbreak = styled.div`
@@ -76,9 +77,10 @@ const AssignmentsNotices = () => {
 			}
 		});
 	}
-	
+
 	const nodeApiUrl = process.env.REACT_APP_NODE_API_URL;
 	const { token } = useContext(UserContext);
+
 	useEffect(() => {
 		Axios.get(`${nodeApiUrl}teacher/getTeacher`, {
 			headers: {
@@ -86,7 +88,7 @@ const AssignmentsNotices = () => {
 			},
 		}).then((res) => {
 			setTeacher(res.data.response);
-			console.log(res.data);
+			// console.log(res.data);
 			setAssignments(res.data.response.assignments);
 			setNotices(res.data.response.notices);
 		});
@@ -97,17 +99,35 @@ const AssignmentsNotices = () => {
 			<AssignmentsContainer>
 				<Heading>Ongoing Assignments</Heading>
 				<Flexbreak />
-				<AssignmentCard click={true} assignments={ongoingAssignments} />
+				{
+					ongoingAssignments.length > 0 ? (
+						<AssignmentCard click={true} assignments={ongoingAssignments} />
+					) : (
+						<Heading message={true}>No ongoing assignments! </Heading>						
+					)
+				}
 			</AssignmentsContainer>
 			<AssignmentsContainer>
 				<Heading>Completed Assignments</Heading>
 				<Flexbreak />
-				<AssignmentCard assignments={completedAssignments} />
+				{
+					completedAssignments.length > 0 ? (
+						<AssignmentCard assignments={completedAssignments} />
+					) : (
+						<Heading message={true}>No deadlines reached ! </Heading>
+					)
+				}
 			</AssignmentsContainer>
 			<NoticesContainer>
 				<Heading>Notices</Heading>
 				<Flexbreak />
-				<Notices notices={notices} />
+				{
+					notices.length > 0 ? (
+						<Notices notices={notices} />
+					) : (
+						<Heading message={true}>No notices have been uploaded yet! </Heading>
+					)
+				}
 			</NoticesContainer>
 		</>
 	);

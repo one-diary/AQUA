@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
-import DescriptionIcon from "@material-ui/icons/Description";
-import ProgressBar from "react-bootstrap/ProgressBar";
+import BackButton from "@material-ui/icons/ArrowBackIos";
+import PaperIcon from "@material-ui/icons/Description";
+import PersonIcon from "@material-ui/icons/AssignmentInd";
 import Axios from "axios";
-
 import UserContext from "../../../contexts/User/UserContext";
 
 const Container = styled.div`
@@ -42,24 +42,6 @@ const InputContainer = styled.div`
 	@media (max-width: 1224px) {
 		flex-direction: column;
 	}
-	.dropzone {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border: 2px dashed #65d862;
-		padding: 2rem;
-		margin: 2rem;
-		width: 90%;
-		height: 40%;
-		border-radius: 20px;
-		background: #f3faf3;
-		outline: none;
-		cursor: pointer;
-		box-shadow: 9px 9px 23px #e3e7ec, -9px -9px 23px #e3e7ec;
-		@media (max-width: 1224px) {
-			height: 20%;
-		}
-	}
 `;
 
 const InputLabel = styled.h1`
@@ -70,7 +52,7 @@ const InputLabel = styled.h1`
 
 const TextInput = styled.input`
 	padding: 0.75rem 1rem;
-	margin: 2rem;
+	margin: 1rem 2rem 1rem 2rem;
 	border-radius: 10px;
 	border: 3px solid #249bd4;
 	background: #def7ff;
@@ -94,6 +76,36 @@ const SubmitBtn = styled.button`
 	outline: none;
 `;
 
+const CloseButton = styled.button`
+	display: flex;
+	align-items: center;
+	padding: 0.75rem 1rem;
+	border-radius: 10px;
+	border: 3px solid #e53935;
+	background: #ffcdd2;
+	text-transform: uppercase;
+	font-size: 1rem;
+	font-weight: 700;
+	color: #e53935;
+	outline: none;
+`;
+
+const AddButton = styled.button`
+	display: flex;
+	align-items: center;
+	padding: 0.75rem 1rem;
+	border-radius: 10px;
+	border: 3px solid #00c853;
+	background: #b9f6ca;
+	text-transform: uppercase;
+	font-size: 1rem;
+	font-weight: 700;
+	color: #00c853;
+	left: 5vw;
+	position:relative;
+	outline: none;
+`;
+
 const StyledFileCopyIcon = styled(FileCopyIcon)`
 	margin: 0 0.5rem 0 0;
 `;
@@ -102,6 +114,14 @@ const InputWrapper = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-direction: column;
+`;
+
+const InputGroup = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction:row;
 `;
 
 const AssignmentsContainer = styled.div`
@@ -117,7 +137,7 @@ const Heading = styled.h1`
 	flex: 1;
 	font-size: 1.5rem !important;
 	font-weight: 900;
-	margin: 2rem 0 0 2rem;
+	margin: ${(props) => props.marginValue || "2rem 0 0 2rem"};
 	color: #41454a;
 `;
 
@@ -135,27 +155,43 @@ const Card = styled.div`
 	box-shadow: 9px 9px 23px #e3e7ec, -9px -9px 23px #e3e7ec;
 	display: flex;
 	flex-direction: column;
-	cursor: pointer;
 	@media (max-width: 1224px) {
 		max-width: 80vw;
 	}
 `;
-
-const Flexbreak = styled.div`
-	flex-basis: 100%;
-	height: 0;
-`;
-const Content = styled.div`
-	color: lightgray;
-`;
-
-const Description = styled.div`
+const CardTitleContainer = styled.div`
 	display: flex;
 	align-items: center;
 	border-radius: 10px 10px 0 0;
+	color: #249bd4;
+	background: #def7ff;
+	padding: 0 1rem;
+`;
+
+const CardTitle = styled.div`
+	margin: 1rem 0;
+	font-weight: normal;
+	padding: 0 1rem;
+	transition: all 0.2s ease;
+`;
+
+const Keyword = styled.span``;
+
+const Group = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+`;
+
+const KeywordsContainer = styled.div`
+	display: flex;
+	align-items: center;
+	padding: 0.75rem 1rem;
+	border-radius: ${(props) =>
+		!props.noBorderRadius ? `0 0 10px 10px ` : `none`};
 	overflow: hidden;
 	${(props) => {
-		if (props.theme === "primary") {
+		if (props.theme !== "primary") {
 			return `
 				color: #F4AA1F !important;
 				background: #FFF3E8 !important;
@@ -167,61 +203,14 @@ const Description = styled.div`
 			`;
 		}
 	}}
-	padding: 0 1rem;
 `;
 
-const DescriptionText = styled.a`
-	cursor: pointer;
-	text-decoration: underline;
-	margin: 1rem 0;
-	padding: 0 1rem;
-	transition: all 0.2s ease;
-	color: inherit !important;
-	&:hover {
-		${(props) => {
-			if (props.theme === "primary") {
-				return `
-				color: #DF9B1C !important;;
-			`;
-			} else {
-				return `
-				color: #51AF4F !important;
-			`;
-			}
-		}}
-	}
+const Flexbreak = styled.div`
+	flex-basis: 100%;
+	height: 0;
 `;
-
-const AssignedBy = styled.div`
-	display: flex;
-	align-items: center;
-	border-radius: 0 0 10px 10px;
-	color: #249bd4;
-	background: #def7ff;
-	padding: 0 1rem;
-`;
-
-const AssignedByText = styled.p`
-	margin: 1rem 0;
-	font-weight: normal;
-	padding: 0 1rem;
-	transition: all 0.2s ease;
-	&:hover {
-	}
-`;
-
-const StyledProgressBar = styled(ProgressBar)`
-	width: 100%;
-	margin: 0 1rem;
-	background: white !important;
-`;
-
-const ProgressBarContainer = styled.div`
-	display: flex;
-	align-items: center;
-	border-radius: 0;
-	background: #eff0f4 !important;
-	padding: 1rem 0;
+const Content = styled.div`
+	color: lightgray;
 `;
 
 const Select = styled.select`
@@ -248,39 +237,69 @@ const Option = styled.option`
 	border: 0px;
 `;
 
-const ProgressBarLabel = styled.span`
-	margin-left: 10vw;
-	display:block;
-	color:${props => props.final > 0 ? `#28a745` :`#dc3545`};
-`
+const demoData = [
+	{
+		name: "Arijit Roy",
+		includedKeywords: ["cat", "dog", "cow"],
+		notIncludedKeywords: ["lion"],
+	},
+	{
+		name: "Arijit Roy",
+		includedKeywords: ["dog", "cow"],
+		notIncludedKeywords: ["cat", "lion"],
+	},
+	{
+		name: "Arijit Roy",
+		includedKeywords: ["cat"],
+		notIncludedKeywords: ["dog", "cow", "lion"],
+	},
+];
 
-const Plagiarism = () => {
-	const [threshold, setThreshold] = useState("");
+const Keywords = () => {
 	const [result, setResult] = useState([]);
 	const [options, setOptions] = useState(null);
 	const [selectedValue, setSelectedValue] = useState("");
+	const [fields, setFields] = useState([{ value: null }]);
 	const [loading,setLoading] = useState(false);
-	const [fetching,setFetching] = useState(false);
 
-	const apiUrl = process.env.REACT_APP_FLASK_API_URL;
+	const handleChange = (i, event) => {
+		const values = [...fields];
+		values[i].value = event.target.value;
+		setFields(values);
+	};
+
+	const handleAdd = () => {
+		const values = [...fields];
+		values.push({ value: null });
+		setFields(values);
+	};
+
+	const handleRemove = (i) => {
+		const values = [...fields];
+		values.splice(i, 1);
+		setFields(values);
+	};
 
 	const getResults = (e) => {
-		e.preventDefault();
+		const apiUrl = process.env.REACT_APP_FLASK_API_URL;
+	
 		setLoading(true);
-		Axios.post(`${apiUrl}/plag`, {
-			subject: "coa",
-			topic: "MultiBus",
+		
+		Axios.post(`${apiUrl}/keywords`, {
+			subject: "physics",
+			topic: "hazards",
+			kwords:["power","current","voltage","induction","primary"] 
 		})
 			.then((res) => {
 				setLoading(false);
-				console.log(res.data, "plag data");
+				console.log(res.data, "keyword data");
 				setResult(res.data);
 			})
 			.catch((err) => {
 				setLoading(false);
 				console.log(err);
 			});
-		// setResult(assignments);
+	
 	};
 
 	const nodeApiUrl = process.env.REACT_APP_NODE_API_URL;
@@ -288,101 +307,107 @@ const Plagiarism = () => {
 
 	useEffect(() => {
 		//Getting assignments for particular teacher
-		setFetching(true);
 		Axios.get(`${nodeApiUrl}teacher/getTeacher`, {
 			headers: {
 				Authorization: "Bearer " + token,
 			},
-		})
+		}) 
 			.then((res) => {
-				setFetching(false);
 				setOptions(res.data.response.assignments);
 			})
 			.catch((err) => {
-				setFetching(false);
 				console.log(err, "Err");
 			});
 	}, [nodeApiUrl, token]);
+
 
 	return (
 		<Container>
 			{result.length > 0 ? (
 				<AssignmentsContainer>
-					<Heading>Plagiarism Checker</Heading>
+					<Group>
+						<BackButton onClick={() => setResult([])} />
+						<Heading marginValue="0 0 0 2rem">
+							Keywords Checker
+						</Heading>
+					</Group>
 					<Flexbreak />
-					{result.map((item, index) => {
-						return (
-							item.results.map(
-								({ name, sim_score }) => {
-									console.log(name,"name");
-									let final =   (parseInt(threshold) - parseInt(sim_score)).toString();
-									return  (
-										<Card key={index + name}>
-											<Content>
-												<Description theme="primary">
-													<DescriptionIcon />
-													<DescriptionText theme="primary">
-														{item.original}
-													</DescriptionText>
-												</Description>
-												<ProgressBarLabel final={final}	
-												>
-												{final > 0 ? `Test passed by ${(final)} %` :  `Test failed by ${-final} %`}
-												</ProgressBarLabel>
-												<ProgressBarContainer>
-													{
-														parseFloat(threshold) < parseFloat(sim_score) ? 
-														(
-															<>
-																<StyledProgressBar
-																	animated
-																	now={(
-																		parseFloat(sim_score)
-																	).toString()}
-																	variant="danger"
-																	key={1}
-																/>					
-															</>
-															) : (
-																<StyledProgressBar
-																	animated
-																	now={(
-																		parseFloat(sim_score)
-																	).toString()}
-																	variant="success"
-																/>
-															)
-													}
-												</ProgressBarContainer>
-												<AssignedBy>
-													<DescriptionIcon />
-													<AssignedByText>
-														{name}
-													</AssignedByText>
-												</AssignedBy>
-											</Content>
-										</Card>
-									)
-							})
-						)
-					})}
+					{result.map((item, index) => (
+						<Card key={index}>
+							<CardTitleContainer>
+								<PersonIcon />
+								<CardTitle>{item.name}</CardTitle>
+							</CardTitleContainer>
+							<Content>
+								<KeywordsContainer
+									noBorderRadius
+									theme="primary">
+									<PaperIcon />
+									<Group>
+										Present: 
+										{
+											(Object.values(item)).map((value,i) => {
+												if(value === "true"){
+													return (
+
+														<Keyword>
+															{Object.keys(item)[i]} {" "}
+														</Keyword>
+															
+													)
+												}
+											})
+										}
+									</Group>
+								</KeywordsContainer>
+								<KeywordsContainer theme="warning">
+									<PaperIcon />
+									<Group>
+									Absent : 
+										{
+											(Object.values(item)).map((value,i) => {
+												if(value === "false"){
+													return (
+														<Keyword>
+															{Object.keys(item)[i]} {" "}
+														</Keyword>
+															
+													)
+												}
+											})
+										}
+									</Group>
+								</KeywordsContainer>
+							</Content>
+						</Card>
+					))}
 				</AssignmentsContainer>
 			) : (
 				<InputContainer>
 					<InputWrapper>
-						<InputLabel>Enter Threshold percentage</InputLabel>
-						<TextInput
-							type="text"
-							value={threshold}
-							onChange={(e) => {
-								e.preventDefault();
-								setThreshold(e.target.value);
-							}}
-						/>
+						<InputGroup>
+							<InputLabel>Enter Keywords</InputLabel>
+							<AddButton onClick={() => handleAdd()}>+</AddButton>
+						</InputGroup>
+						{fields.map((field, idx) => {
+							return (
+								<InputGroup key={`${field}-${idx}`}>
+									<TextInput
+										type="text"
+										value={field.value}
+										onChange={(e) => handleChange(idx, e)}
+									/>
+									<CloseButton
+										onClick={() => handleRemove(idx)}>
+										X
+									</CloseButton>
+								</InputGroup>
+							);
+						})}
 					</InputWrapper>
 
 					<InputWrapper>
-						<InputLabel>{fetching ? "Fetching Assignments" : "Select Assignment"}</InputLabel>
+						<InputLabel>Select Assignment</InputLabel>
 						<Select
 							onChange={(e) => {
 								setSelectedValue(e.target.value);
@@ -414,7 +439,7 @@ const Plagiarism = () => {
 							getResults(e);
 						}}>
 						<StyledFileCopyIcon />
-						{loading ? "Processing" : "check"}
+						{loading ? "Retrieving" : "Check"}
 					</SubmitBtn>
 				</InputContainer>
 			)}
@@ -422,4 +447,4 @@ const Plagiarism = () => {
 	);
 };
 
-export default Plagiarism;
+export default Keywords;
