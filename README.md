@@ -287,7 +287,7 @@ Arijit Roy - [GitHub](https://github.com/radioactive11) - roy.arijit2001@gmail.c
 
 Kartik Goel - [GitHub](https://github.com/kg-kartik) - goel.kartik39@gmail.com
 
-Boidushya - [GitHub](https://github.com/Boidushya) - amankumarjagdev@gmail.com
+Aman Kumar Jagdev - [GitHub](https://github.com/Boidushya) - amankumarjagdev@gmail.com
 
 Aditya Yadav - [GitHub](https://github.com/aditya635) - adityayadav635@gmail.com
 
