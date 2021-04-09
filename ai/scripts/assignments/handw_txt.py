@@ -20,14 +20,12 @@ def convert_txt(subject: str, tag: str):
     
 def run_plag_detection():
     results = plag.main()
-    # dump_files = os.listdir("DUMP")
+    dump_files = os.listdir("DUMP")
     
-    # for file in dump_files:
-    #     if file != '.gitignore':
-    #             os.remove(os.path.join("DUMP", file))
+    for file in dump_files:
+        if file != '.gitignore':
+                os.remove(os.path.join("DUMP", file))
                 
     return results
     
 
-# convert_txt("coa", "Probability")
-# run_plag_detection()
