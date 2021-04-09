@@ -23,7 +23,7 @@ class Keywords(Resource):
         subject = request.json['subject']
         topic = request.json['topic']
         kwords = request.json['kwords']
-        
+        handw_txt.convert_txt(subject, topic)
         return jsonify(check_keywords(kwords))
 
 api.add_resource(Keywords, "/keywords")
