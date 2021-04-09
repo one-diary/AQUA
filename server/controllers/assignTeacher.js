@@ -4,6 +4,7 @@ const sendResponse = require("../utils/sendResponse");
 const Assignments = require("../models/Assignments");
 const Student = require("../models/Students");
 const Notices = require("../models/Notices");
+const { setMaxListeners } = require("../models/Students");
 
 //Upload assignment
 module.exports.uploadAssignment = asyncHandler(async (req, res) => {
@@ -11,50 +12,77 @@ module.exports.uploadAssignment = asyncHandler(async (req, res) => {
 
     const teacher = await Teacher.findById(req.teacher._id);
 
-    //Creating new assignment
+    //Anti Burdening system
+    const savedAssignments = await Assignments.find({});
 
-    const newAssignment = new Assignments({
-        givenBy: req.teacher._id,
-        title,
-        description,
-        assignmentGiven,
-        deadline,
-        uploadDate: Date.now(),
+    let validAssignment = true;
+
+    savedAssignments.map((assignment) => {
+        const oldDeadline = new Date(assignment.deadline);
+        const newDeadline = new Date(deadline);
+
+        console.log(deadline, "deadline");
+        console.log("new deadline", newDeadline);
+
+        if (newDeadline - oldDeadline < 86400000) {
+            validAssignment = false;
+            console.log("cant upload");
+            return;
+        }
     });
 
-    const saveAssignment = await newAssignment.save();
+    //Creating new assignment
 
-    console.log(saveAssignment, "uploaded Assignment");
+    if (validAssignment) {
+        const newAssignment = new Assignments({
+            givenBy: req.teacher._id,
+            title,
+            description,
+            assignmentGiven,
+            deadline,
+            uploadDate: Date.now(),
+        });
 
-    const updatedTeacher = await Teacher.findByIdAndUpdate(
-        {
-            _id: teacher._id,
-        },
-        {
-            $push: {
-                assignments: saveAssignment._id,
+        const saveAssignment = await newAssignment.save();
+
+        console.log(saveAssignment, "uploaded Assignment");
+
+        const updatedTeacher = await Teacher.findByIdAndUpdate(
+            {
+                _id: teacher._id,
             },
-        },
-        {
-            runValidators: true,
-            new: true,
+            {
+                $push: {
+                    assignments: saveAssignment._id,
+                },
+            },
+            {
+                runValidators: true,
+                new: true,
+            }
+        ).populate("assignments");
+
+        console.log(updatedTeacher, "savedTeacher");
+
+        //Saving assignments in each students document
+        const students = await Student.find({});
+
+        for (let i = 0; i < students.length; i++) {
+            students[i].assignments.push(saveAssignment._id);
+
+            const savedStudent = await students[i].save();
+
+            console.log(savedStudent, "savedStudent");
         }
-    ).populate("assignments");
 
-    console.log(updatedTeacher, "savedTeacher");
-
-    //Saving assignments in each students document
-    const students = await Student.find({});
-
-    for (let i = 0; i < students.length; i++) {
-        students[i].assignments.push(saveAssignment._id);
-
-        const savedStudent = await students[i].save();
-
-        console.log(savedStudent, "savedStudent");
+        sendResponse(updatedTeacher, "assignment uploaded", res);
+    } else {
+        sendResponse(
+            validAssignment,
+            "Sorry, there is already an ongoing assignment, please try again after 24hrs",
+            res
+        );
     }
-
-    sendResponse(updatedTeacher, "assignment uploaded", res);
 });
 
 //Get all assignments of teachers and assignments submitted by students
