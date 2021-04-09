@@ -145,6 +145,8 @@ const Upload = () => {
 	const [title, setTitle] = useState("");
 	const [desc, setDesc] = useState("");
 	const [deadline, setDeadline] = useState("");
+	const [loading,setLoading] = useState(false);
+
 	const getResults = () => {
 		if (files) {
 			const fData = new FormData();
@@ -158,9 +160,11 @@ const Upload = () => {
 				data: fData,
 			};
 
+			setLoading(true);
+
 			Axios(config)
 				.then((res) => {
-					console.log(res.data.url, "ok");
+					// console.log(res.data.url, "ok");
 					Axios.post(
 						`${nodeApiUrl}teacher/uploadAssignment`,
 						{
@@ -176,10 +180,12 @@ const Upload = () => {
 						}
 					)
 						.then((res) => {
-							console.log(res.data);
+							// console.log(res.data);
+							setLoading(false);
 							window.alert(res.data.message);
 						})
 						.catch((err) => {
+							setLoading(false);
 							console.log(err);
 						});
 				})
@@ -187,7 +193,7 @@ const Upload = () => {
 					console.log(err);
 				});
 		} else {
-			console.log("No formdata");
+			// console.log("No formdata");
 		}
 	};
 
@@ -273,7 +279,7 @@ const Upload = () => {
 			)}
 			<UploadButton onClick={() => getResults()}>
 				<StyledPublishIcon />
-				Upload
+				{loading ? "Uploading.." : "Upload"}
 			</UploadButton>
 		</Container>
 	);

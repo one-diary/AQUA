@@ -148,12 +148,16 @@ const Upload = () => {
 	const [title, setTitle] = useState("");
 	const [desc, setDesc] = useState("");
 	const [deadline, setDeadline] = useState("");
+	const [loading,setLoading] = useState(false);
+
 	const getResults = () => {
 		if (files) {
 			const fData = new FormData();
 			fData.append("subject", title);
 			fData.append("doc", files[0]);
 			console.log(files[0], "file");
+
+			setLoading(true);
 
 			var config = {
 				method: "post",
@@ -180,9 +184,12 @@ const Upload = () => {
 					)
 						.then((res) => {
 							// console.log(res.data);
+							setLoading(false);
 							window.alert(res.data.message);
 						})
 						.catch((err) => {
+							setLoading(false);
+							window.alert("Network error, please try again");
 							console.log(err);
 						});
 				})
@@ -191,6 +198,7 @@ const Upload = () => {
 				});
 		} else {
 			// console.log("No formdata");
+			window.alert("Please choose a file");
 		}
 	};
 
@@ -275,7 +283,7 @@ const Upload = () => {
 			)}
 			<UploadButton onClick={() => getResults()}>
 				<StyledPublishIcon />
-				Upload
+				{loading ? "Uploading assignment" : "Upload"}
 			</UploadButton>
 		</Container>
 	);

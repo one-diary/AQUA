@@ -259,20 +259,25 @@ const Plagiarism = () => {
 	const [result, setResult] = useState([]);
 	const [options, setOptions] = useState(null);
 	const [selectedValue, setSelectedValue] = useState("");
+	const [loading,setLoading] = useState(false);
+	const [fetching,setFetching] = useState(false);
 
 	const apiUrl = process.env.REACT_APP_FLASK_API_URL;
 
 	const getResults = (e) => {
 		e.preventDefault();
+		setLoading(true);
 		Axios.post(`${apiUrl}/plag`, {
 			subject: "coa",
 			topic: "MultiBus",
 		})
 			.then((res) => {
+				setLoading(false);
 				console.log(res.data, "plag data");
 				setResult(res.data);
 			})
 			.catch((err) => {
+				setLoading(false);
 				console.log(err);
 			});
 		// setResult(assignments);
@@ -283,15 +288,18 @@ const Plagiarism = () => {
 
 	useEffect(() => {
 		//Getting assignments for particular teacher
+		setFetching(true);
 		Axios.get(`${nodeApiUrl}teacher/getTeacher`, {
 			headers: {
 				Authorization: "Bearer " + token,
 			},
 		})
 			.then((res) => {
+				setFetching(false);
 				setOptions(res.data.response.assignments);
 			})
 			.catch((err) => {
+				setFetching(false);
 				console.log(err, "Err");
 			});
 	}, [nodeApiUrl, token]);
@@ -333,9 +341,7 @@ const Plagiarism = () => {
 																	).toString()}
 																	variant="danger"
 																	key={1}
-																/>
-
-													
+																/>					
 															</>
 															) : (
 																<StyledProgressBar
@@ -376,7 +382,7 @@ const Plagiarism = () => {
 					</InputWrapper>
 
 					<InputWrapper>
-						<InputLabel>Select Assignment</InputLabel>
+						<InputLabel>{fetching ? "Fetching Assignments" : "Select Assignment"}</InputLabel>
 						<Select
 							onChange={(e) => {
 								setSelectedValue(e.target.value);
@@ -408,7 +414,7 @@ const Plagiarism = () => {
 							getResults(e);
 						}}>
 						<StyledFileCopyIcon />
-						Check
+						{loading ? "Processing" : "check"}
 					</SubmitBtn>
 				</InputContainer>
 			)}
