@@ -1,6 +1,6 @@
 import os
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, __version__
-
+import secret
 
 def upload_file(container_name, local_file_path, remote_file_path):
     """uploads a file in azure blob and returns its url
