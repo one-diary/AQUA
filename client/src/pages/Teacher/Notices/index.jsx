@@ -126,6 +126,7 @@ const Upload = () => {
 				window.alert(res.data.message);
 			})
 			.catch((err) => {
+				window.alert("Network error");
 				setLoading(false);
 				console.log(err);
 			});

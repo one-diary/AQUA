@@ -132,6 +132,7 @@ const Quiz = () => {
 			setIsLoading(false);
 			// console.log(res.data,"data");
 		}).catch((err) => {
+			window.alert("Network error");
 			setIsLoading(false);
 			console.log(err);
 		})

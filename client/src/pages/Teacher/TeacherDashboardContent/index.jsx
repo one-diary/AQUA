@@ -91,6 +91,8 @@ const AssignmentsNotices = () => {
 			// console.log(res.data);
 			setAssignments(res.data.response.assignments);
 			setNotices(res.data.response.notices);
+		}).catch((err) => {
+			window.alert("Network error");
 		});
 	}, [nodeApiUrl, token]);
 
