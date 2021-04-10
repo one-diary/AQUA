@@ -250,26 +250,27 @@ const Option = styled.option`
 
 const ProgressBarLabel = styled.span`
 	margin-left: 10vw;
-	display:block;
-	color:${props => props.final > 0 ? `#28a745` :`#dc3545`};
-`
+	display: block;
+	color: ${(props) => (props.final > 0 ? `#28a745` : `#dc3545`)};
+`;
 
 const Plagiarism = () => {
 	const [threshold, setThreshold] = useState("");
 	const [result, setResult] = useState([]);
 	const [options, setOptions] = useState(null);
 	const [selectedValue, setSelectedValue] = useState("");
-	const [loading,setLoading] = useState(false);
-	const [fetching,setFetching] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [fetching, setFetching] = useState(false);
 
 	const apiUrl = process.env.REACT_APP_FLASK_API_URL;
 
 	const getResults = (e) => {
 		e.preventDefault();
 		setLoading(true);
+		const splittedSelectedValue = selectedValue.split(" ");
 		Axios.post(`${apiUrl}/plag`, {
-			subject: "coa",
-			topic: "MultiBus",
+			subject: splittedSelectedValue[0],
+			topic: splittedSelectedValue[1],
 		})
 			.then((res) => {
 				setLoading(false);
@@ -277,10 +278,10 @@ const Plagiarism = () => {
 				setResult(res.data);
 			})
 			.catch((err) => {
+				window.alert("Network error");
 				setLoading(false);
 				console.log(err);
 			});
-		// setResult(assignments);
 	};
 
 	const nodeApiUrl = process.env.REACT_APP_NODE_API_URL;
@@ -299,6 +300,7 @@ const Plagiarism = () => {
 				setOptions(res.data.response.assignments);
 			})
 			.catch((err) => {
+				window.alert("Network error");
 				setFetching(false);
 				console.log(err, "Err");
 			});
@@ -311,60 +313,58 @@ const Plagiarism = () => {
 					<Heading>Plagiarism Checker</Heading>
 					<Flexbreak />
 					{result.map((item, index) => {
-						return (
-							item.results.map(
-								({ name, sim_score }) => {
-									console.log(name,"name");
-									let final =   (parseInt(threshold) - parseInt(sim_score)).toString();
-									return  (
-										<Card key={index + name}>
-											<Content>
-												<Description theme="primary">
-													<DescriptionIcon />
-													<DescriptionText theme="primary">
-														{item.original}
-													</DescriptionText>
-												</Description>
-												<ProgressBarLabel final={final}	
-												>
-												{final > 0 ? `Test passed by ${(final)} %` :  `Test failed by ${-final} %`}
-												</ProgressBarLabel>
-												<ProgressBarContainer>
-													{
-														parseFloat(threshold) < parseFloat(sim_score) ? 
-														(
-															<>
-																<StyledProgressBar
-																	animated
-																	now={(
-																		parseFloat(sim_score)
-																	).toString()}
-																	variant="danger"
-																	key={1}
-																/>					
-															</>
-															) : (
-																<StyledProgressBar
-																	animated
-																	now={(
-																		parseFloat(sim_score)
-																	).toString()}
-																	variant="success"
-																/>
-															)
-													}
-												</ProgressBarContainer>
-												<AssignedBy>
-													<DescriptionIcon />
-													<AssignedByText>
-														{name}
-													</AssignedByText>
-												</AssignedBy>
-											</Content>
-										</Card>
-									)
-							})
-						)
+						return item.results.map(({ name, sim_score }) => {
+							console.log(name, "name");
+							let final = (
+								parseInt(threshold) - parseInt(sim_score)
+							).toString();
+							return (
+								<Card key={index + name}>
+									<Content>
+										<Description theme="primary">
+											<DescriptionIcon />
+											<DescriptionText theme="primary">
+												{item.original}
+											</DescriptionText>
+										</Description>
+										<ProgressBarLabel final={final}>
+											{final > 0
+												? `Test passed by ${final} %`
+												: `Test failed by ${-final} %`}
+										</ProgressBarLabel>
+										<ProgressBarContainer>
+											{parseFloat(threshold) <
+											parseFloat(sim_score) ? (
+												<>
+													<StyledProgressBar
+														animated
+														now={parseFloat(
+															sim_score
+														).toString()}
+														variant="danger"
+														key={1}
+													/>
+												</>
+											) : (
+												<StyledProgressBar
+													animated
+													now={parseFloat(
+														sim_score
+													).toString()}
+													variant="success"
+												/>
+											)}
+										</ProgressBarContainer>
+										<AssignedBy>
+											<DescriptionIcon />
+											<AssignedByText>
+												{name}
+											</AssignedByText>
+										</AssignedBy>
+									</Content>
+								</Card>
+							);
+						});
 					})}
 				</AssignmentsContainer>
 			) : (
@@ -382,7 +382,11 @@ const Plagiarism = () => {
 					</InputWrapper>
 
 					<InputWrapper>
-						<InputLabel>{fetching ? "Fetching Assignments" : "Select Assignment"}</InputLabel>
+						<InputLabel>
+							{fetching
+								? "Fetching Assignments"
+								: "Select Assignment"}
+						</InputLabel>
 						<Select
 							onChange={(e) => {
 								setSelectedValue(e.target.value);

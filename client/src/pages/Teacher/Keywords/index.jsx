@@ -102,13 +102,17 @@ const AddButton = styled.button`
 	font-weight: 700;
 	color: #00c853;
 	left: 5vw;
-	position:relative;
+	position: relative;
 	outline: none;
 `;
 
 const StyledFileCopyIcon = styled(FileCopyIcon)`
 	margin: 0 0.5rem 0 0;
 `;
+
+const BackButtonIcon = styled(BackButton)`
+	margin : 2rem 0 0 2rem;
+`
 
 const InputWrapper = styled.div`
 	display: flex;
@@ -121,7 +125,7 @@ const InputGroup = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	flex-direction:row;
+	flex-direction: row;
 `;
 
 const AssignmentsContainer = styled.div`
@@ -137,7 +141,7 @@ const Heading = styled.h1`
 	flex: 1;
 	font-size: 1.5rem !important;
 	font-weight: 900;
-	margin: ${(props) => props.marginValue || "2rem 0 0 2rem"};
+	margin: 2rem 0 0 2rem;
 	color: #41454a;
 `;
 
@@ -169,16 +173,19 @@ const CardTitleContainer = styled.div`
 `;
 
 const CardTitle = styled.div`
-	margin: 1rem 0;
+	margin: 1rem 0rem;
 	font-weight: normal;
-	padding: 0 1rem;
+	padding: 0 1vw;
 	transition: all 0.2s ease;
 `;
 
-const Keyword = styled.span``;
+const Keyword = styled.span`
+	margin-left:1vw;
+`;
 
 const Group = styled.div`
 	display: flex;
+	margin-left:1vw;
 	align-items: center;
 	justify-content: center;
 `;
@@ -193,8 +200,8 @@ const KeywordsContainer = styled.div`
 	${(props) => {
 		if (props.theme !== "primary") {
 			return `
-				color: #F4AA1F !important;
-				background: #FFF3E8 !important;
+				color: #fc1703;
+				background: #FFF3E8;
 			`;
 		} else {
 			return `
@@ -237,30 +244,13 @@ const Option = styled.option`
 	border: 0px;
 `;
 
-const demoData = [
-	{
-		name: "Arijit Roy",
-		includedKeywords: ["cat", "dog", "cow"],
-		notIncludedKeywords: ["lion"],
-	},
-	{
-		name: "Arijit Roy",
-		includedKeywords: ["dog", "cow"],
-		notIncludedKeywords: ["cat", "lion"],
-	},
-	{
-		name: "Arijit Roy",
-		includedKeywords: ["cat"],
-		notIncludedKeywords: ["dog", "cow", "lion"],
-	},
-];
-
 const Keywords = () => {
 	const [result, setResult] = useState([]);
 	const [options, setOptions] = useState(null);
 	const [selectedValue, setSelectedValue] = useState("");
 	const [fields, setFields] = useState([{ value: null }]);
-	const [loading,setLoading] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [fetching,setFetching] = useState(false);
 
 	const handleChange = (i, event) => {
 		const values = [...fields];
@@ -282,13 +272,14 @@ const Keywords = () => {
 
 	const getResults = (e) => {
 		const apiUrl = process.env.REACT_APP_FLASK_API_URL;
-	
+
 		setLoading(true);
-		
+		const kwords = fields.map((item) => item.value);
+		const splittedSelectedValue = selectedValue.split(" ");
 		Axios.post(`${apiUrl}/keywords`, {
-			subject: "physics",
-			topic: "hazards",
-			kwords:["power","current","voltage","induction","primary"] 
+			subject: splittedSelectedValue[0],
+			topic: splittedSelectedValue[1],
+			kwords,
 		})
 			.then((res) => {
 				setLoading(false);
@@ -296,10 +287,10 @@ const Keywords = () => {
 				setResult(res.data);
 			})
 			.catch((err) => {
+				window.alert("Network error");
 				setLoading(false);
 				console.log(err);
 			});
-	
 	};
 
 	const nodeApiUrl = process.env.REACT_APP_NODE_API_URL;
@@ -307,27 +298,30 @@ const Keywords = () => {
 
 	useEffect(() => {
 		//Getting assignments for particular teacher
+		setFetching(true);
 		Axios.get(`${nodeApiUrl}teacher/getTeacher`, {
 			headers: {
 				Authorization: "Bearer " + token,
 			},
-		}) 
+		})
 			.then((res) => {
+				setFetching(false);
 				setOptions(res.data.response.assignments);
 			})
 			.catch((err) => {
+				window.alert("Error fetching assignments");
+				setFetching(false);
 				console.log(err, "Err");
 			});
 	}, [nodeApiUrl, token]);
-
 
 	return (
 		<Container>
 			{result.length > 0 ? (
 				<AssignmentsContainer>
 					<Group>
-						<BackButton onClick={() => setResult([])} />
-						<Heading marginValue="0 0 0 2rem">
+						<BackButtonIcon onClick={() => setResult([])} />
+						<Heading>
 							Keywords Checker
 						</Heading>
 					</Group>
@@ -344,38 +338,29 @@ const Keywords = () => {
 									theme="primary">
 									<PaperIcon />
 									<Group>
-										Present: 
-										{
-											(Object.values(item)).map((value,i) => {
-												if(value === "true"){
-													return (
-
-														<Keyword>
-															{Object.keys(item)[i]} {" "}
-														</Keyword>
-															
-													)
-												}
-											})
-										}
+										Present : 
+										{Object.values(item).map(
+											(value, i) =>
+												value === "true" && (
+													<Keyword>
+														{Object.keys(item)[i]}{" "}
+													</Keyword>
+												)
+										)}
 									</Group>
 								</KeywordsContainer>
 								<KeywordsContainer theme="warning">
 									<PaperIcon />
 									<Group>
-									Absent : 
-										{
-											(Object.values(item)).map((value,i) => {
-												if(value === "false"){
-													return (
-														<Keyword>
-															{Object.keys(item)[i]} {" "}
-														</Keyword>
-															
-													)
-												}
-											})
-										}
+										Absent : 
+										{Object.values(item).map(
+											(value, i) =>
+												value === "false" && (
+													<Keyword>
+														{Object.keys(item)[i]}
+													</Keyword>
+												)
+										)}
 									</Group>
 								</KeywordsContainer>
 							</Content>
@@ -407,7 +392,7 @@ const Keywords = () => {
 					</InputWrapper>
 
 					<InputWrapper>
-						<InputLabel>Select Assignment</InputLabel>
+						<InputLabel>{fetching ? "Fetching Assignments" : "Select Assignment"}</InputLabel>
 						<Select
 							onChange={(e) => {
 								setSelectedValue(e.target.value);
