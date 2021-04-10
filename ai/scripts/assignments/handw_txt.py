@@ -11,7 +11,7 @@ def convert_txt(subject: str, tag: str):
         filename = file.split('/')[-1]
         loc_id = ocr.get_operation_id(file)
                 
-        time.sleep(5)    
+        time.sleep(4)    
         
         content = ocr.run_ocr(loc_id)
 
