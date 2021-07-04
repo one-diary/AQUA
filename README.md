@@ -1,4 +1,3 @@
-:construction: **This project is still under development** :construction:
 <p float="left">
 
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com) 
