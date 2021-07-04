@@ -291,7 +291,9 @@ Aman Kumar Jagdev - [GitHub](https://github.com/Boidushya) - amankumarjagdev@gma
 
 Aditya Yadav - [GitHub](https://github.com/aditya635) - adityayadav635@gmail.com
 
-Website: [http://aqua-app.now.sh/](http://aqua-app.now.sh/)
+Boidushya Bhattacharyay - [GitHub](https://github.com/boidushya) - boidushyabhattacharya@gmail.com
+
+Website: [https://aqua-client.vercel.app/](https://aqua-client.vercel.app/)
 
 
 <img src = "https://imgs.xkcd.com/comics/students.png">
